@@ -65,7 +65,7 @@ export default function Homepage() {
   /** @type {LoaderReturnData} */
   const data = useLoaderData();
   return (
-    <div className="home">
+    <div className="home"> 
       {data.isShopLinked ? null : <MockShopNotice />}
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
@@ -78,7 +78,7 @@ export default function Homepage() {
  *   collection: FeaturedCollectionFragment;
  * }}
  */
-function FeaturedCollection({collection}) {
+function FeaturedCollection({collection}) { 
   if (!collection) return null;
   const image = collection?.image;
   return (

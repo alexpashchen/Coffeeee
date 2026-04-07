@@ -16,5 +16,9 @@ export async function loader({params, context}) {
   return null;
 }
 
+export default function BuilderPage() {
+  return <h1>Builder</h1>;
+}
+
 /** @typedef {import('@shopify/remix-oxygen').LoaderFunctionArgs} LoaderFunctionArgs */
 /** @typedef {import('@shopify/remix-oxygen').SerializeFrom<typeof loader>} LoaderReturnData */
