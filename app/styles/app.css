@@ -84,7 +84,7 @@ img {
   }
 }
 
-aside {
+/* aside {
   background: var(--color-light);
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   height: 100vh;
@@ -93,7 +93,7 @@ aside {
   right: calc(-1 * var(--aside-width));
   top: 0;
   transition: transform 200ms ease-in-out;
-}
+} */
 
 aside header {
   align-items: center;
@@ -233,7 +233,7 @@ button.reset:hover:not(:has(> *)) {
   padding: 0 1rem;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 100;
 }
 
 .header-menu-mobile-toggle {

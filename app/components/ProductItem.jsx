@@ -15,6 +15,7 @@ export function ProductItem({product, loading}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
   return (
+    <div>
     <Link
       className="product-item"
       key={product.id}
@@ -34,7 +35,12 @@ export function ProductItem({product, loading}) {
       <small>
         <Money data={product.priceRange.minVariantPrice} />
       </small>
-    </Link>
+      </Link>
+
+      { product.roastLevel?.value && (
+        <p>Roast Level: {product.roastLevel.value}</p>
+      )}
+      </div>
   );
 }
 

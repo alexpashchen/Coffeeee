@@ -80,12 +80,12 @@ export async function loader(args) {
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
     }),
     consent: {
-      checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
-      storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
-      withPrivacyBanner: false,
-      // localize the privacy banner
-      country: args.context.storefront.i18n.country,
-      language: args.context.storefront.i18n.language,
+        checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
+        storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+        withPrivacyBanner: false,
+        // localize the privacy banner
+        country: args.context.storefront.i18n.country,
+        language: args.context.storefront.i18n.language,
     },
   };
 }
@@ -158,7 +158,6 @@ export function Layout({children}) {
         <Links />
       </head>
       <body>
-        test555
         {children}
         
         <ScrollRestoration nonce={nonce} />
