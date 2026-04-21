@@ -386,7 +386,7 @@ function CartBadge({count}) {
       }}
     >
       <img
-        src="https://cdn.shopify.com/s/files/1/0669/3113/0467/files/cart-icon.svg?v=1776160337"
+        src="/app/assets/cart-icon.svg"
         alt="Cart"
         className="h-5 w-5"
       />{' '}
