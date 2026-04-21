@@ -2,6 +2,7 @@ import {Suspense, useState} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
+import cartIcon from '~/assets/cart-icon.svg';
 
 /**
  * @param {HeaderProps}
@@ -386,7 +387,7 @@ function CartBadge({count}) {
       }}
     >
       <img
-        src="/app/assets/cart-icon.svg"
+        src={cartIcon}
         alt="Cart"
         className="h-5 w-5"
       />{' '}
