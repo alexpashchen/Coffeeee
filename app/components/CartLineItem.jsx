@@ -3,7 +3,8 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
-import cartDelete from '~/assets/cart-delete.svg';
+import cartDelete from '~/assets/delete-icon.svg';
+const deleteIconUrl = typeof cartDelete === 'string' ? cartDelete : cartDelete?.src || '';
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
@@ -147,7 +148,7 @@ function CartLineRemoveButton({lineIds, disabled}) {
       inputs={{lineIds}}
     >
       <button disabled={disabled} type="submit">
-        <img src={cartDelete} alt="Delete" />
+        <img src={deleteIconUrl} alt="Delete" />
       </button>
     </CartForm>
   );
