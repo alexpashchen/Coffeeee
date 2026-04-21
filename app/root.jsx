@@ -157,7 +157,7 @@ export function Layout({children}) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className='flex min-h-screen flex-col'>
         {children}
         
         <ScrollRestoration nonce={nonce} />

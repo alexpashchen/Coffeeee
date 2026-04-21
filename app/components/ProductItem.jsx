@@ -1,49 +1,55 @@
-import {Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
-import {useVariantUrl} from '~/lib/variants';
+import {Link} from 'react-router';
 
 /**
  * @param {{
- *   product:
- *     | CollectionItemFragment
- *     | ProductItemFragment
- *     | RecommendedProductFragment;
+ *   product: {
+ *     id: string;
+ *     handle: string;
+ *     title: string;
+ *     featuredImage?: any;
+ *     priceRange?: {
+ *       minVariantPrice?: any;
+ *     };
+ *   };
  *   loading?: 'eager' | 'lazy';
  * }}
  */
-export function ProductItem({product, loading}) {
-  const variantUrl = useVariantUrl(product.handle);
+export function ProductItem({product, loading = 'lazy'}) {
   const image = product.featuredImage;
-  return (
-    <div>
-    <Link
-      className="product-item"
-      key={product.id}
-      prefetch="intent"
-      to={variantUrl}
-    >
-      {image && (
-        <Image
-          alt={image.altText || product.title}
-          aspectRatio="1/1"
-          data={image}
-          loading={loading}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h4>{product.title}</h4>
-      <small>
-        <Money data={product.priceRange.minVariantPrice} />
-      </small>
-      </Link>
+  const price = product.priceRange?.minVariantPrice;
 
-      { product.roastLevel?.value && (
-        <p>Roast Level: {product.roastLevel.value}</p>
-      )}
+  return (
+    <Link
+      to={`/products/${product.handle}`}
+      className="group block text-inherit no-underline"
+      prefetch="intent"
+    >
+      <div className="overflow-hidden rounded-[24px] bg-stone-100">
+        {image ? (
+          <Image
+            data={image}
+            aspectRatio="1/1"
+            loading={loading}
+            className="block h-auto w-full transition duration-500 group-hover:scale-[1.03]"
+            sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+          />
+        ) : (
+          <div className="aspect-square w-full bg-stone-200" />
+        )}
       </div>
+
+      <div className="px-1 pt-4">
+        <h3 className="text-base font-medium leading-[1.35]">
+          {product.title}
+        </h3>
+
+        {price ? (
+          <div className="mt-2 text-sm text-black/65">
+            <Money data={price} />
+          </div>
+        ) : null}
+      </div>
+    </Link>
   );
 }
-
-/** @typedef {import('storefrontapi.generated').ProductItemFragment} ProductItemFragment */
-/** @typedef {import('storefrontapi.generated').CollectionItemFragment} CollectionItemFragment */
-/** @typedef {import('storefrontapi.generated').RecommendedProductFragment} RecommendedProductFragment */

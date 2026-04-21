@@ -1,172 +1,148 @@
-import {redirect, useLoaderData} from 'react-router';
-import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
+import {useLoaderData, useNavigation, useSearchParams} from 'react-router';
+import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
+import {ShopFiltersSidebar} from '~/components/ShopFiltersSidebar';
+import {ActiveFiltersBar} from '~/components/ActiveFiltersBar';
+import {GridAreaOverlayLoader} from '~/components/GridAreaOverlayLoader';
+import {SHOP_COLLECTION_QUERY} from '~/lib/shopQuery';
+import {
+  parseFiltersFromSearchParams,
+  getSortValues,
+  deletePaginationParams,
+} from '~/lib/shopFilters';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+export const meta = () => {
+  return [{title: `Shop`}];
 };
 
 /**
  * @param {Route.LoaderArgs} args
  */
-export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
-  const criticalData = await loadCriticalData(args);
-
-  return {...deferredData, ...criticalData};
-}
-
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- * @param {Route.LoaderArgs}
- */
-async function loadCriticalData({context, params, request}) {
-  const {handle} = params;
+export async function loader({context, request, params}) {
   const {storefront} = context;
+  const {handle} = params;
+  const url = new URL(request.url);
+
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
+    pageBy: 12,
   });
 
-  if (!handle) {
-    throw redirect('/collections');
-  }
+  const sort = url.searchParams.get('sort') || 'best-selling';
+  const filters = parseFiltersFromSearchParams(url.searchParams);
+  const {sortKey, reverse} = getSortValues(sort);
 
-  const [{collection}] = await Promise.all([
-    storefront.query(COLLECTION_QUERY, {
-      variables: {handle, ...paginationVariables},
-      // Add other queries here, so that they are loaded in parallel
-    }),
-  ]);
+  const data = await storefront.query(SHOP_COLLECTION_QUERY, {
+    variables: {
+      handle,
+      ...paginationVariables,
+      sortKey,
+      reverse,
+      filters,
+    },
+  });
 
-  if (!collection) {
-    throw new Response(`Collection ${handle} not found`, {
+  if (!data?.collection) {
+    throw new Response(`Collection "${handle}" not found`, {
       status: 404,
     });
   }
 
-  // The API handle might be localized, so redirect to the localized handle
-  redirectIfHandleIsLocalized(request, {handle, data: collection});
-
   return {
-    collection,
+    collection: data.collection,
+    selectedSort: sort,
   };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- * @param {Route.LoaderArgs}
- */
-function loadDeferredData({context}) {
-  return {};
-}
-
-export default function Collection() {
+export default function ShopRoute() {
   /** @type {LoaderReturnData} */
-  const {collection} = useLoaderData();
+  const {collection, selectedSort} = useLoaderData();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigation = useNavigation();
+
+  const products = collection.products;
+  const filters = collection.products.filters || [];
+  const isLoading = navigation.state !== 'idle';
+
+  function handleSortChange(event) {
+    const next = new URLSearchParams(searchParams);
+    next.set('sort', event.target.value);
+    deletePaginationParams(next);
+    setSearchParams(next, {preventScrollReset: true});
+  }
 
   return (
-    <div className="collection">
-      <h1>{collection.title}</h1>
-      <p className="collection-description">{collection.description}</p>
-      <PaginatedResourceSection
-        connection={collection.products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
+    <div className="px-4 py-8 md:px-6 lg:px-8">
+      <div className="mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-medium tracking-[-0.04em] md:text-5xl">
+            { collection.title }
+          </h1>
+        </header>
+
+        <div className="mb-6 flex flex-col gap-4 border-b border-black/10 pb-6 md:flex-row md:items-center md:justify-between">
+          <ActiveFiltersBar
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
           />
-        )}
-      </PaginatedResourceSection>
-      <Analytics.CollectionView
-        data={{
-          collection: {
-            id: collection.id,
-            handle: collection.handle,
-          },
-        }}
-      />
+
+          <div className="flex items-center gap-3">
+            <label htmlFor="sort" className="text-sm text-black/60">
+              Sort
+            </label>
+
+            <select
+              id="sort"
+              value={selectedSort}
+              onChange={handleSortChange}
+              className="h-11 rounded-full border border-black/10 bg-white px-4 text-sm outline-none transition hover:border-black/20"
+            >
+              <option value="best-selling">Best selling</option>
+              <option value="newest">Newest</option>
+              <option value="price-asc">Price, low to high</option>
+              <option value="price-desc">Price, high to low</option>
+              <option value="title-asc">Alphabetically, A-Z</option>
+              <option value="title-desc">Alphabetically, Z-A</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <aside className="lg:sticky lg:top-6 lg:self-start">
+            <ShopFiltersSidebar
+              filters={filters}
+              searchParams={searchParams}
+              setSearchParams={setSearchParams}
+              isLoading={isLoading}
+            />
+          </aside>
+
+          <main>
+            <div className="relative">
+              <PaginatedResourceSection
+                connection={products}
+                resourcesClassName="products-grid"
+              >
+                {({node: product, index}) => (
+                  <ProductItem
+                    key={product.id}
+                    product={product}
+                    loading={index < 8 ? 'eager' : undefined}
+                  />
+                )}
+              </PaginatedResourceSection>
+
+              {isLoading ? <GridAreaOverlayLoader /> : null}
+            </div>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }
 
-const PRODUCT_ITEM_FRAGMENT = `#graphql
-  fragment MoneyProductItem on MoneyV2 {
-    amount
-    currencyCode
-  }
-  fragment ProductItem on Product {
-    id
-    handle
-    title
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
-    }
-    priceRange {
-      minVariantPrice {
-        ...MoneyProductItem
-      }
-      maxVariantPrice {
-        ...MoneyProductItem
-      }
-    }
-  }
-`;
-
-// NOTE: https://shopify.dev/docs/api/storefront/2022-04/objects/collection
-const COLLECTION_QUERY = `#graphql
-  ${PRODUCT_ITEM_FRAGMENT}
-  query Collection(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-    $first: Int
-    $last: Int
-    $startCursor: String
-    $endCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      handle
-      title
-      description
-      products(
-        first: $first,
-        last: $last,
-        before: $startCursor,
-        after: $endCursor
-      ) {
-        nodes {
-          ...ProductItem
-        }
-        pageInfo {
-          hasPreviousPage
-          hasNextPage
-          endCursor
-          startCursor
-        }
-      }
-    }
-  }
-`;
-
-/** @typedef {import('./+types/collections.$handle').Route} Route */
-/** @typedef {import('storefrontapi.generated').ProductItemFragment} ProductItemFragment */
+/** @typedef {import('./+types/shop.$handle').Route} Route */
 /** @typedef {import('@shopify/remix-oxygen').SerializeFrom<typeof loader>} LoaderReturnData */

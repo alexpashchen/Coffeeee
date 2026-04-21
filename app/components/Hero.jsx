@@ -33,16 +33,16 @@ export function Hero({
   const titleLines = title.split('\n');
 
   return (
-    <section className="relative overflow-hidden bg-[#120c08] text-white">
+    <section className="relative overflow-hidden bg-[#120c08] text-white px-4 md:px-8 lg:px-12">
       <img
         src={image.src}
         alt={image.alt}
         className="absolute inset-0 h-full w-full object-cover"
       />
 
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,12,8,0.96)_0%,rgba(18,12,8,0.88)_22%,rgba(18,12,8,0.56)_48%,rgba(18,12,8,0.16)_72%,rgba(18,12,8,0.06)_100%)]" />
+      <div className=" absolute inset-0 bg-[linear-gradient(90deg,rgba(18,12,8,0.96)_0%,rgba(18,12,8,0.88)_22%,rgba(18,12,8,0.56)_48%,rgba(18,12,8,0.16)_72%,rgba(18,12,8,0.06)_100%)]" />
 
-      <div className="relative z-10 flex min-h-[720px] items-center px-6 py-14 sm:px-10 lg:px-16">
+      <div className="relative z-10 flex min-h-[720px] items-center  py-14   max-w-7xl mx-auto">
         <div className="max-w-[560px]">
           <h1 className="text-[52px] font-semibold leading-[0.95] tracking-[-0.04em] sm:text-[68px] lg:text-[86px]">
             {titleLines.map((line, index) => (

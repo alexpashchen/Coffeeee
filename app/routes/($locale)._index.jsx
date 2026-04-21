@@ -1,8 +1,11 @@
-import {Await, useLoaderData} from 'react-router';
-import {Suspense} from 'react';
-import {ProductItem} from '~/components/ProductItem';
+import {useLoaderData} from 'react-router';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {Hero} from '~/components/Hero';
+import {FeaturedCollection} from '~/components/FeaturedCollection';
+import {FEATURED_COLLECTION_QUERY} from '~/lib/featuredCollectionQuery';
+import {SHOP_BY_CATEGORY_QUERY} from '~/lib/shopByCategoryQuery';
+import {ShopByCategory} from '~/components/ShopByCategory';
+import {QuizPromoBlock} from '~/components/QuizPromoBlock';
 
 /**
  * @type {Route.MetaFunction}
@@ -30,8 +33,28 @@ export async function loader(args) {
  * @param {Route.LoaderArgs}
  */
 async function loadCriticalData({context}) {
+  const {storefront} = context;
+
+  const [featuredCollection, shopByCategory] = await Promise.all([
+    storefront.query(FEATURED_COLLECTION_QUERY, {
+      variables: {
+        handle: 'featured-collection',
+      },
+    }),
+    storefront.query(SHOP_BY_CATEGORY_QUERY),
+  ]);
+  
+  const categoryCollections = [
+    shopByCategory.espresso,
+    shopByCategory.pourOver,
+    shopByCategory.decaf,
+    shopByCategory.bestSellers,
+  ].filter(Boolean);
+
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
+    featuredCollection: featuredCollection?.collection || null,
+    categoryCollections: categoryCollections || null,
   };
 }
 
@@ -52,7 +75,9 @@ export default function Homepage() {
     <div className="home"> 
       {data.isShopLinked ? null : <MockShopNotice />}
       <Hero />
-      
+      <FeaturedCollection collection={data.featuredCollection}/>
+      <ShopByCategory collections={data.categoryCollections} />
+      <QuizPromoBlock />
     </div>
   );
 }

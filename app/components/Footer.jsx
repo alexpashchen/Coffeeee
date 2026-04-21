@@ -1,22 +1,20 @@
 import {Suspense} from 'react';
-import {Await, NavLink} from 'react-router';
+import {Await} from 'react-router';
 
 /**
  * @param {FooterProps}
  */
-export function Footer({footer: footerPromise, header, publicStoreDomain}) {
+export function Footer({footer: footerPromise}) {
   return (
     <Suspense>
       <Await resolve={footerPromise}>
-        {(footer) => (
-          <footer className="footer">
-            {footer?.menu && header.shop.primaryDomain?.url && (
-              <FooterMenu
-                menu={footer.menu}
-                primaryDomainUrl={header.shop.primaryDomain.url}
-                publicStoreDomain={publicStoreDomain}
-              />
-            )}
+        {() => (
+          <footer className="border-t border-white/10 mt-16 bg-black">
+            <div className="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
+              <p className="text-center text-sm text-white/60">
+                © {new Date().getFullYear()} Coffee Store. All rights reserved.
+              </p>
+            </div>
           </footer>
         )}
       </Await>
@@ -24,41 +22,26 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
   );
 }
 
-/**
- * @param {{
- *   menu: FooterQuery['menu'];
- *   primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
- *   publicStoreDomain: string;
- * }}
- */
 function FooterMenu({menu, primaryDomainUrl, publicStoreDomain}) {
   return (
     <nav className="footer-menu" role="navigation">
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
         if (!item.url) return null;
-        // if the url is internal, we strip the domain
+
         const url =
           item.url.includes('myshopify.com') ||
           item.url.includes(publicStoreDomain) ||
           item.url.includes(primaryDomainUrl)
             ? new URL(item.url).pathname
             : item.url;
+
         const isExternal = !url.startsWith('/');
+
         return isExternal ? (
           <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
             {item.title}
           </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
+        ) : null;
       })}
     </nav>
   );
@@ -105,19 +88,6 @@ const FALLBACK_FOOTER_MENU = {
     },
   ],
 };
-
-/**
- * @param {{
- *   isActive: boolean;
- *   isPending: boolean;
- * }}
- */
-function activeLinkStyle({isActive, isPending}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
-}
 
 /**
  * @typedef {Object} FooterProps

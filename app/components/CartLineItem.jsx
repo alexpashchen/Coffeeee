@@ -146,7 +146,7 @@ function CartLineRemoveButton({lineIds, disabled}) {
       inputs={{lineIds}}
     >
       <button disabled={disabled} type="submit">
-        Remove
+        <img src="https://cdn.shopify.com/s/files/1/0669/3113/0467/files/delete-icon.svg?v=1776259428"/>
       </button>
     </CartForm>
   );
