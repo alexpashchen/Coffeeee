@@ -1,45 +1,138 @@
-# Hydrogen template: Skeleton
+# Coffee Store — Headless Shopify (Hydrogen)
 
-Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **minimal setup** of components, queries and tooling to get started with Hydrogen.
+Modern headless Shopify storefront focused on performance, UX, and conversion.
 
-[Check out Hydrogen docs](https://shopify.dev/custom-storefronts/hydrogen)
-[Get familiar with Remix](https://remix.run/docs/en/v1)
+This project demonstrates a custom eCommerce experience built with Hydrogen, including quiz-based product recommendations, optimized product pages, and clean UI architecture.
 
-## What's included
+---
 
-- Remix
-- Hydrogen
-- Oxygen
-- Vite
-- Shopify CLI
-- ESLint
-- Prettier
-- GraphQL generator
-- TypeScript and JavaScript flavors
-- Minimal setup of components and routes
+## Local Preview
 
-## Getting started
+Project is intended to be run locally.
 
-**Requirements:**
-
-- Node.js version 18.0.0 or higher
-
-```bash
-npm create @shopify/hydrogen@latest
 ```
-
-## Building for production
-
-```bash
-npm run build
-```
-
-## Local development
-
-```bash
+npm install
 npm run dev
 ```
 
-## Setup for using Customer Account API (`/account` section)
+Open in browser:
+http://localhost:3000
 
-Follow step 1 and 2 of <https://shopify.dev/docs/custom-storefronts/building-with-the-customer-account-api/hydrogen#step-1-set-up-a-public-domain-for-local-development>
+---
+
+## Screenshots
+
+### Homepage
+
+![Homepage](./docs/homepage.png)
+
+### Product Page (PDP)
+
+![PDP](./docs/pdp.png)
+
+### Quiz Flow
+
+![Quiz](./docs/quiz.png)
+
+
+## Features
+
+* Custom Product Page (PDP)
+* Quiz-based product recommendation flow
+* Multi-step quiz UX
+* Cart drawer with overlay
+* Collection and product grid
+* Responsive layout
+* Shopify Storefront API integration
+* Tailwind-based UI styling
+
+---
+
+## Key Focus
+
+* Headless Shopify architecture
+* UX and CRO improvements
+* Scalable component structure
+* Clean GraphQL data flow
+* Frontend customization beyond standard Shopify themes
+
+---
+
+## Tech Stack
+
+* Hydrogen
+* Remix
+* React
+* Tailwind CSS
+* Shopify Storefront API
+* GraphQL
+* Vite
+
+---
+
+## Project Structure
+
+/app
+/components
+/routes
+/lib
+/styles
+/public
+/docs
+
+---
+
+## Setup
+
+### 1. Install dependencies
+
+```
+npm install
+```
+
+### 2. Create `.env`
+
+SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
+SHOPIFY_STOREFRONT_API_TOKEN=your_token
+
+### 3. Run the project
+
+```
+npm run dev
+```
+
+---
+
+## Demo Setup
+
+To run the project locally:
+
+1. Create Shopify store
+2. Generate Storefront API token
+3. Add products and collections
+4. Paste credentials into `.env`
+5. Run project
+
+---
+
+## What to Check
+
+* Quiz → /app/routes/quiz
+* Product page → /app/routes/products.$handle
+* Cart drawer → /app/components/Aside
+* GraphQL → /app/lib
+
+---
+
+## Future Improvements
+
+* Subscriptions
+* Advanced filtering
+* Quiz personalization
+* Performance optimizations
+
+---
+
+## License
+
+MIT

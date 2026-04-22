@@ -9,10 +9,13 @@ import {scoreProducts, buildRecommendationCopy} from '~/lib/quizScoring';
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return {
-    title: 'Coffee Quiz',
-    description: 'Find your perfect coffee match with our quiz!',
-  }; 
+  return [
+    {title: 'Coffee Quiz'},
+    {
+      name: 'description',
+      content: 'Find your perfect coffee match with our quiz!',
+    },
+  ];
 };
 
 /**
