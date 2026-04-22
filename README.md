@@ -6,6 +6,19 @@ This project demonstrates a custom eCommerce experience built with Hydrogen, inc
 
 ---
 
+## Important
+
+This project requires a connected Shopify store to run correctly.
+
+To start the app locally, you need:
+
+- a Shopify store
+- Storefront API access token
+- configured products and collections
+- environment variables in `.env`
+
+Without these credentials, the storefront cannot fetch data and will not work as expected.
+
 ## Local Preview
 
 Project is intended to be run locally.
