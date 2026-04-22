@@ -176,15 +176,11 @@ export default function App() {
   }
 
   return (
-    <Analytics.Provider
-      cart={data.cart}
-      shop={data.shop}
-      consent={data.consent}
-    >
+    
       <PageLayout {...data}>
         <Outlet />
       </PageLayout>
-    </Analytics.Provider>
+    
   );
 }
 
